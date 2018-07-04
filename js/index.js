@@ -33,47 +33,46 @@ function inicializarSlider(){
 /*
   Función que reproduce el video de fondo al hacer scroll, y deteiene la reproducción al detener el scroll
 */
-function playVideoOnScroll(){
-  var ultimoScroll = 0,
-      intervalRewind;
-  var video = document.getElementById('vidFondo');
-  $(window)
-    .scroll((event)=>{
-      var scrollActual = $(window).scrollTop();
-      if (scrollActual > ultimoScroll){
-       video.play();
-     } else {
-        //this.rewind(1.0, video, intervalRewind);
-        video.play();
-     }
-     ultimoScroll = scrollActual;
-    })
-    .scrollEnd(()=>{
-      video.pause();
-    }, 10)
-}
+// function playVideoOnScroll(){
+//   var ultimoScroll = 0,
+//       intervalRewind;
+//   var video = document.getElementById('vidFondo');
+//   $(window)
+//     .scroll((event)=>{
+//       var scrollActual = $(window).scrollTop();
+//       if (scrollActual > ultimoScroll){
+//        video.play();
+//      } else {
+//         //this.rewind(1.0, video, intervalRewind);
+//         video.play();
+//      }
+//      ultimoScroll = scrollActual;
+//     })
+//     .scrollEnd(()=>{
+//       video.pause();
+//     }, 10)
+// }
 //Funcion para cargar los selects de ciudades y tipo
-function cargarCiudades() {
-  $.ajax({
-    url:'index.php',
-    type:"post",
-    dataType:"json",
-    success:function (data) {
-    $.each(data[0],function(index, value){
-        $("#selectCiudad").append("<option value="+value+">"+value+"</option>");
-      },
-    );
-    $.each(data[1],function(index, value){
-        $("#selectTipo").append("<option value="+value+">"+value+"</option>");
-      }
-    );
-    },
-    error:function () {
-      alert("error");
-    }
-
-  })
-}
+// function cargarCiudades() {
+//   $.ajax({
+//     url:'index.php',
+//     type:"post",
+//     dataType:"json",
+//     success:function (data) {
+//     $.each(data[0],function(index, value){
+//         $("#selectCiudad").append("<option value="+value+">"+value+"</option>");
+//       },
+//     );
+//     $.each(data[1],function(index, value){
+//         $("#selectTipo").append("<option value="+value+">"+value+"</option>");
+//       }
+//     );
+//     },
+//     error:function () {
+//       alert("error");
+//     }
+//   })
+// }
 //Funcion llamodo ajax para mostrar en pantalla todos los registros
 $("#mostrarTodos").on("click",function () {
    $.ajax({
@@ -93,6 +92,7 @@ $("#mostrarTodos").on("click",function () {
 
 $("#formulario").submit(function (e) {
   e.preventDefault();
+
     var ciudad=$("select[name='ciudad']").val();
     var rango=$("input[name='precio']").val();
     var tipo=$("select[name='tipo']").val();
@@ -109,6 +109,25 @@ $("#formulario").submit(function (e) {
       }
     })
 })
+//Funcion para cargar los selects de la vista
+function cargarSelects(){
+    var tipos = [];
+    var ciudades = [];
+    $.get('data-1.json', function(data){
+        for(let i = 0; i < data.length; i++){
+            if(tipos.indexOf(data[i].Tipo) === -1) tipos.push(data[i].Tipo);
+            if(ciudades.indexOf(data[i].Ciudad) === -1) ciudades.push(data[i].Ciudad);
+        }
+        for(let i = 0; i < ciudades.length; i++){
+            $('#selectCiudad').append('<option value="'+ciudades[i]+'">'+ciudades[i]+'</option>');
+        }
+        for(let j = 0; j < tipos.length; j++){
+            $('#selectTipo').append('<option value="'+tipos[j]+'">'+tipos[j]+'</option>');
+        }
+        $('select').material_select();
+    });
+}
+
 //Funcion que carga los datos en pantalla
 function imprimirPantalla(data) {
    $(".colContenido").empty();
@@ -137,6 +156,6 @@ function imprimirPantalla(data) {
   }
 }
 
-inicializarSlider();
 //playVideoOnScroll();
-cargarCiudades();
+inicializarSlider();
+cargarSelects();
